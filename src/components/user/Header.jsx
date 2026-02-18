@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Header() {
   return (
@@ -33,27 +34,27 @@ function Header() {
         </div>
 
         <div className="col-xl-auto col-md-6 col-sm-12 mb-2">
-            <a href="all_level.html" className="connect_btn d-inline-block">
+            <Link to="/level" className="connect_btn d-inline-block">
                 All Level <i className="fas fa-users"></i>
-            </a>
+            </Link>
         </div>
 
         <div className="col-xl-auto col-md-6 col-sm-12 mb-2">
-            <a href="all_transaction.html" className="connect_btn d-inline-block">
+            <Link to="/transaction" className="connect_btn d-inline-block">
                 All Transaction <i className="fas fa-list"></i>
-            </a>
+            </Link>
         </div>
 
         <div className="col-xl-auto col-md-6 col-sm-12 mb-2">
-            <a href="roi_calculator.html" className="connect_btn d-inline-block">
+            <Link to="/roiCalculator" className="connect_btn d-inline-block">
                 Staking Calculator <i className="fas fa-list"></i>
-            </a>
+            </Link>
         </div>
 
         <div className="col-xl-auto col-md-6 col-sm-12 mb-2">
-            <a href="https://nirmalx.io/postdata.php?logout=1" className="connect_btn d-inline-block">
+            <Link to="https://nirmalx.io/postdata.php?logout=1" className="connect_btn d-inline-block">
                 LOGOUT <i className="fas fa-sign-out-alt"></i>
-            </a>
+            </Link>
         </div>
 
     </div>

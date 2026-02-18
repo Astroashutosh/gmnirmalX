@@ -9,7 +9,7 @@ import './assets/css/style.css'
 import './assets/style.css'
 
 import './index.css'
-import './assets/user/css/all.min.css'
+// import './assets/user/css/all.min.css'
 import './assets/user/css/bootstrap.min.css'
 
 import './assets/user/css/doogle.css'
