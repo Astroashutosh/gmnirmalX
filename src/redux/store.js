@@ -6,7 +6,7 @@ import rootReducer from "./rootReducer";
 const persistConfig = {
   key: "root",
   storage: sessionStorage,
-  whitelist: ["user"],
+  whitelist: ["wallet"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

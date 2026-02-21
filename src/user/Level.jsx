@@ -1,62 +1,358 @@
-import React from 'react'
-
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { ethers } from "ethers";
+import { getMainContract, getSigner } from "../utils/contract";
+import { toast } from "react-toastify";
 function Level() {
+  const { address,contracts } = useSelector((state) => state.wallet);
+
+  const [selectedLevel, setSelectedLevel] = useState(1);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (contracts?.MAIN_CONTRACT) {
+      loadLevelUsers(selectedLevel);
+    }
+  }, [selectedLevel, contracts]);
+
+  /* ================= LEVEL USERS ================= */
+
+//   const loadLevelUsers = async (level) => {
+//     try {
+//       setLoading(true);
+//       setUsers([]);
+
+//       const signer = await getSigner();
+//       const account = await signer.getAddress();
+//       // const account = "0xc56eCBBf7A3C63cF659c87355fD548e9b78b30c0";
+
+//       const main = await getMainContract(
+//         contracts.MAIN_CONTRACT
+//       );
+
+//       const userExists = await main.isUserExists(
+//         account
+//       );
+
+//       if (!userExists) {
+//         alert("User does not exist.");
+//         setLoading(false);
+//         return;
+//       }
+
+//       let currentLevelUsers =
+//         await main.partners(account);
+// console.log(currentLevelUsers);
+//       // move to required level
+//       for (let i = 1; i < level; i++) {
+//         let nextLevelUsers = [];
+
+//         for (const user of currentLevelUsers) {
+//           const partners =
+//             await main.partners(user);
+//           nextLevelUsers =
+//             nextLevelUsers.concat(partners);
+//         }
+
+//         currentLevelUsers = nextLevelUsers;
+//       }
+
+//       if (currentLevelUsers.length === 0) {
+//         setUsers([]);
+//         setLoading(false);
+//         return;
+//       }
+
+//       let finalUsers = [];
+
+//       let index = 1;
+
+//       for (const userAddress of currentLevelUsers) {
+//         const userData =
+//           await main.users(userAddress);
+
+//         const userDetails =
+//           await main.user_details(userAddress);
+
+//         finalUsers.push({
+//           index: index++,
+//           address: userAddress,
+//           partnerId: userData.referralCode,
+//           amount: Number(
+//             ethers.formatUnits(
+//               userData.totalStaked,
+//               18
+//             )
+//           ),
+//           teamBusiness: Number(
+//             ethers.formatUnits(
+//               userDetails.totalTeambuisness,
+//               18
+//             )
+//           ),
+//           rank: userData.rank,
+//           level: level,
+//           status:
+//             Number(
+//               ethers.formatUnits(
+//                 userData.totalStaked,
+//                 18
+//               )
+//             ) >= 125
+//               ? "Active"
+//               : "Inactive",
+//         });
+//       }
+
+//       setUsers(finalUsers);
+//       setLoading(false);
+//     } catch (error) {
+//       console.error(
+//         "Error fetching level users:",
+//         error
+//       );
+//       alert(
+//         "An error occurred while fetching users."
+//       );
+//       setLoading(false);
+//     }
+//   };
+
+
+
+
+
+const loadLevelUsers = async (level) => {
+  try {
+    setLoading(true);
+    setUsers([]);
+
+    if (!contracts?.MAIN_CONTRACT) {
+      toast.error("Contract not loaded");
+      setLoading(false);
+      return;
+    }
+
+    // const signer = await getSigner();
+    // const account = await signer.getAddress();
+    // const account = address;
+ const account = "0x2c50670e45Fd9C6347630c733BF1B3d76cdFCd1d";
+    const main = await getMainContract(
+      contracts.MAIN_CONTRACT
+    );
+
+    const userExists = await main.isUserExists(account);
+
+    if (!userExists) {
+      toast.error("User does not exist.");
+      setLoading(false);
+      return;
+    }
+
+    let currentLevelUsers =
+      await main.partners(account);
+
+    for (let i = 1; i < level; i++) {
+      let nextLevelUsers = [];
+
+      for (const user of currentLevelUsers) {
+        if (!user || user === ethers.ZeroAddress)
+          continue;
+
+        try {
+          const partners =
+            await main.partners(user);
+          nextLevelUsers =
+            nextLevelUsers.concat(partners);
+        } catch {
+          continue;
+        }
+      }
+
+      currentLevelUsers = nextLevelUsers;
+    }
+
+    if (currentLevelUsers.length === 0) {
+      toast.info(
+        `No users found for level ${level}`
+      );
+      setLoading(false);
+      return;
+    }
+
+    let finalUsers = [];
+    let index = 1;
+
+    for (const userAddress of currentLevelUsers) {
+      try {
+        const userData =
+          await main.users(userAddress);
+// console.log("User Data:", userData);
+        const userDetails =
+          await main.user_details(userAddress);
+
+        const totalStaked = Number(
+          ethers.formatUnits(
+            userData.totalStaked,
+            18
+          )
+        );
+
+        finalUsers.push({
+          index: index++,
+          address: userAddress,
+          partnerId: userData.referralCode,
+          amount: totalStaked,
+          teamBusiness: Number(
+            ethers.formatUnits(
+              userDetails.totalTeambuisness,
+              18
+            )
+          ),
+          rank: userData.rank,
+          // rank: Number(userData[5]),
+          level: level,
+          status:
+            totalStaked >= 125
+              ? "Active"
+              : "Inactive",
+        });
+      } catch {
+        continue;
+      }
+    }
+
+    setUsers(finalUsers);
+
+    if (finalUsers.length > 0) {
+      toast.success(
+        `Level ${level} loaded successfully`
+      );
+    }
+
+    setLoading(false);
+  } catch (error) {
+    console.error("Level fetch error:", error);
+    toast.error("Failed to load level users.");
+    setLoading(false);
+  }
+};
+
+
+
+
   return (
-   <>
-     <div className="transaction-container">
-   
-        <h2>Get Level</h2>
-    
-      	
+    <div className="transaction-container">
+      <h2>Get Level</h2>
 
-        <table className="table  transaction-table" id="data-table5" style={{color:"#ffffff"}}        >
-                       <thead>
-                         <tr>
-                         	<th colspan="4"></th>
-                            <th className="text-right"> Select Level</th>
-                            <th>
-                              
-                                <form action="http://localhost/sky/admin/trip-offer-report">
-                            <div className="input-group">
-							<select className="form-control" name="id" id="selected_level" tabindex="-1" aria-hidden="true">
-                                                            <option value="1">Level-1</option>
-                                                            <option value="2">Level-2</option>
-                                                            <option value="3">Level-3</option>
-                                                            <option value="4">Level-4</option>
-                                                            <option value="5">Level-5</option>
-                                                            <option value="6">Level-6</option>
-                                                            <option value="7">Level-7</option>
-                                                            <option value="8">Level-8</option>
-                                                            <option value="9">Level-9</option>
-                                                            <option value="10">Level-10</option>
-                                                           </select>
-							
-                            </div>
-                        </form>
-                           
-                            </th>
-                         </tr>
-                          <tr>
-                            <th>S/No.</th>
-                            <th>Partner ID</th>
-                            <th>Amount</th>
-                            <th>From Address</th>
-                            <th> Team Business</th>
-                            <th>Rank</th>
-                            <th>Level</th>
-                            <th>Status</th>
-                           
-                          </tr>
-                        </thead>
-                        <tbody>
-                          
-                        </tbody>
-                      </table>
+      <table
+        className="table transaction-table"
+        style={{ color: "#ffffff" }}
+      >
+        <thead>
+          <tr>
+            <th colSpan="4"></th>
+            <th className="text-right">
+              Select Level
+            </th>
+            <th>
+              <div className="input-group">
+                <select
+                  className="form-control"
+                  value={selectedLevel}
+                  onChange={(e) =>
+                    setSelectedLevel(
+                      Number(e.target.value)
+                    )
+                  }
+                >
+                  {[...Array(10)].map((_, i) => (
+                    <option
+                      key={i + 1}
+                      value={i + 1}
+                    >
+                      Level-{i + 1}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </th>
+          </tr>
+
+          <tr>
+            <th>S/No.</th>
+            <th>Partner ID</th>
+            <th>Amount</th>
+            <th>From Address</th>
+            <th>Team Business</th>
+            <th>Rank</th>
+            <th>Level</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan="8" className="text-center">
+                Loading...
+              </td>
+            </tr>
+          ) : users.length === 0 ? (
+            <tr>
+              <td colSpan="8" className="text-center">
+                No users found for level{" "}
+                {selectedLevel}
+              </td>
+            </tr>
+          ) : (
+            users.map((user) => (
+              <tr key={user.index}>
+                <td>{user.index}</td>
+
+                <td>{user.partnerId}</td>
+
+                <td>
+                  $
+                  {user.amount.toLocaleString()}
+                </td>
+
+                <td>
+                  {user.address.substring(0, 6)}
+                  ...
+                  {user.address.substring(
+                    user.address.length - 4
+                  )}
+                </td>
+
+                <td>
+                  $
+                  {user.teamBusiness.toLocaleString()}
+                </td>
+
+                <td>{user.rank}</td>
+
+                <td>{user.level}</td>
+
+                <td
+                  style={{
+                    color:
+                      user.status === "Active"
+                        ? "green"
+                        : "red",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {user.status}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
-
-   
-   </>
-  )
+  );
 }
 
-export default Level
+export default Level;

@@ -1,13 +1,16 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Footer from "./Footer";
 import Common from "./Common";
 
 function ProtectedRoute() {
-  const isAuthenticated = localStorage.getItem("token");
+  const { isConnected } = useSelector(
+    (state) => state.wallet
+  );
 
-  return !isAuthenticated ? (
+  return isConnected ? (
     <>
-      <Common/>
+      <Common />
       <Outlet />
       <Footer />
     </>

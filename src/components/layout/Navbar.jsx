@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-
 function Navbar() {
   return (
     <>
@@ -33,7 +32,7 @@ function Navbar() {
               <li className="nav-item"><Link className="navbarDesign nav-link navcolor " to="front/files/NirmalXPresentation.pdf" download="NirmalX_Whitepaper.html">Whitepaper </Link></li>
               <li className="nav-item"><Link className="navbarDesign nav-link navcolor " to="#">Community </Link></li>
           </ul>
-         
+ 
       </div>
   </div>
 </nav>
