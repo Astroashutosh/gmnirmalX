@@ -1,147 +1,17 @@
-// import React from 'react'
-// import { Link } from 'react-router-dom'
-
-// function Cards() {
-//   return (
-//    <>
-   
-//      <div className="row"  style={{ marginTop: "45px" }}>
-                // <div className="col-lg-4 col-md-4">
-                //     <div className="farms-single-section gradient-border stakeBg" >
-                //         <div className="coin-desc">
-                //             <div className="coin-desc-left">
-                //                 <img src="/images/logo.png" alt="NirmalX"/>
-                //             </div>
-                //             <div className="coin-desc-right newFont">
-                //                 <h4><b id="duration0">Stake Now </b></h4>
-                //                 <ul>
-                //                     <li className="bg history0 nonSelect" style={{float: "right"}}><Link to="/stakingHistory" style={{color:"#ffffff"}}>View History</Link></li>
-                //                 </ul>
-                //             </div>
-                //         </div>
-                //         <div className="calculat">
-                //          <div className="calculat-left">
-                //             <h6>Minimum :</h6>
-                //             <h6>Maximum :</h6>
-                //             <h6>Current Stake :</h6>
-                //          </div>
-                //          <div className="calculat-right">
-                //             <h6>$ 10</h6>
-                //             <h6>Unlimted</h6>
-                //             <h6 className="currentStake">Loading..</h6>
-                //          </div>                          
-                //         </div>
-                //         <label for="amount"style={{ marginTop: "0.5rem" }}>Select Package*</label>
-                //         <select id="stake_token" className="form-control" >
-                //             <option value="1">Staking Package</option>
-                           
-                //         </select>
-                //         <label for="amount"style={{ marginTop: "0.5rem" }}>Amount*</label>
-                //         <input type="text" id="stake_amt"placeholder="Enter amount" className="form-control stakeAmount"/>
-                //         <h6 id="total_mtx" className="text mt-3"></h6>
-                //         <div className="unlocks" >
-                //             <Link className="connect_btn unlockWallet"  >Submit</Link>
-                //         </div>
-                        
-                //     </div>
-                // </div>
-
-
-//                 <div className="col-lg-4 col-md-4">
-//                     <div className="farms-single-section gradient-border stakeBg" >
-//                         <div className="coin-desc">
-//                             <div className="coin-desc-left">
-//                                 <img src="/images/logo.png" alt="NirmalX"/>
-//                             </div>
-//                             <div className="coin-desc-right newFont">
-//                                 <h4><b id="duration0">ROI</b></h4>
-//                                 <ul>
-//                                     <li className="bg history0 nonSelect" style={{float: "right"}}><Link to="/miningHistory" style={{color:"#ffffff"}}>View History</Link></li>
-//                                 </ul>
-//                             </div>
-//                         </div>
-//                         <div className="calculat">
-//                          <div className="calculat-left">
-//                             <h6>Total ROI :</h6>
-//                             <h6>Total Capital Return :</h6>
-//                          </div>
-//                          <div className="calculat-right">
-//                             <h6 className="totalROI">Loading..</h6>
-//                             <h6 className="totalCapitalReturn">Loading..</h6>
-//                          </div>  
-                         
-                         
-//                         </div>
-                       
-//                         <div className="form-control stakeAmount" style={{ background: "none", border: "none" }}></div>
-                      
-//                         <div className="unlocks "  style={{ marginTop: "9.9rem" }} id="mine_now">
-//                             <Link className='connect_btn unlockWallet' id="calculate_roi_btn"  style={{textAalign: "center"}}>Calculate ROI</Link>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div className="col-lg-4 col-md-4">
-//                     <div className="farms-single-section gradient-border stakeBg" >
-//                         <div className="coin-desc">
-//                             <div className="coin-desc-left">
-//                                 <img src="/images/logo.png" alt="NirmalX"/>
-//                             </div>
-//                             <div className="coin-desc-right newFont">
-//                                 <h4><b id="duration0">Withdraw</b></h4>
-//                                 <ul>
-//                                     <li className="bg history0 nonSelect" style={{float: "right"}}><Link to="/withdrawHistory" style={{color:"#ffffff"}}>View History</Link></li>
-//                                 </ul>
-//                             </div>
-//                         </div>
-                        
-//                         <div className="calculat">
-//                          <div className="calculat-left">
-                            
-//                             <h6>Withdrawable Amount:</h6>
-//                             <h6>Total Withdraw :</h6>
-
-//                          </div>
-//                          <div className="calculat-right">
-                            
-//                             <h6 className="withdrawable_amount">Loading..</h6>
-//                             <h6 className="total_withdraw">Loading..</h6>
-//                          </div>
-//                         </div>
-                     
-//                         <label for="amount" style={{marginTop:"7rem"}}>Amount*</label>
-//                         <input type="text" id="withdraw_amt"placeholder="Enter amount" className="form-control withdrawAmount" onkeyup="show_price('withdraw',this)"/>
-//                         <h6 id="total_bbt" className="text mt-3"></h6>
-                       
-//                         <div className="unlocks " >
-//                             <Link className='connect_btn unlockWallet' id="withdraw_btn"   style={{ textAlign: "center" }}> Withdraw </Link>
-//                         </div>
-//                     </div>
-//                 </div>
-              
-                    
-//                 </div>
-   
-//    </>
-//   )
-// }
-
-// export default Cards
-
-
-
-
 
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
+import logo from '/images/logo.png';
+
 import {
   getMainContract,
   getUSDTContract
 } from "../utils/contract";
 
-function Cards() {
+function Cards({totalWithdraw }) {
 
   const { address, contracts } = useSelector((state) => state.wallet);
 
@@ -436,7 +306,7 @@ const handleWithdraw = async () => {
 
     /* ===== DAILY LIMIT CHECK (API) ===== */
     const checkResponse = await fetch(
-      "https://yourdomain.com/api/user_action.php",
+      "https://nirmalx.io/user/user_action.php",
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -530,7 +400,7 @@ const handleWithdraw = async () => {
         <div className="farms-single-section gradient-border stakeBg">
           <div className="coin-desc">
             <div className="coin-desc-left">
-              <img src="/images/logo.png" alt="NirmalX"/>
+              <img src={logo} alt="NirmalX"/>
             </div>
             <div className="coin-desc-right newFont">
               <h4><b>Stake Now</b></h4>
@@ -590,7 +460,7 @@ const handleWithdraw = async () => {
                     <div className="farms-single-section gradient-border stakeBg" >
                         <div className="coin-desc">
                             <div className="coin-desc-left">
-                                <img src="/images/logo.png" alt="NirmalX"/>
+                                <img src={logo} alt="NirmalX"/>
                             </div>
                             <div className="coin-desc-right newFont">
                                 <h4><b id="duration0">ROI</b></h4>
@@ -627,7 +497,7 @@ const handleWithdraw = async () => {
                     <div className="farms-single-section gradient-border stakeBg" >
                         <div className="coin-desc">
                             <div className="coin-desc-left">
-                                <img src="/images/logo.png" alt="NirmalX"/>
+                                <img src={logo} alt="NirmalX"/>
                             </div>
                             <div className="coin-desc-right newFont">
                                 <h4><b id="duration0">Withdraw</b></h4>
@@ -649,7 +519,11 @@ const handleWithdraw = async () => {
                             <h6 className="withdrawable_amount"> {userData
                   ? `$ ${userData.withdrawable.toFixed(4)} ( NRX ${(userData.withdrawable/nrxPrice).toFixed(4)} )`
                   : "Loading.."}</h6>
-                            <h6 className="total_withdraw">Loading..</h6>
+                      <h6 className="total_withdraw">
+  {userData
+    ? `$ ${totalWithdraw.usd} ( NRX ${totalWithdraw.nrx} )`
+    : "Loading.."}
+</h6>
                          </div>
                         </div>
                      

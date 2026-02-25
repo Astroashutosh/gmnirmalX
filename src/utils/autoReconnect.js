@@ -1,40 +1,146 @@
-import { ethers } from "ethers";
+
+
+// export const autoReconnect = async (dispatch, requiredChainId) => {
+//   try {
+//     if (!window.ethereum) return;
+
+//     const provider = new ethers.BrowserProvider(window.ethereum);
+
+//     const accounts = await provider.send("eth_accounts", []);
+
+//     if (!accounts.length) return;
+
+//     const network = await provider.getNetwork();
+
+//     if (Number(network.chainId) !== requiredChainId) return;
+
+//     const userId = localStorage.getItem("userId");
+
+//     dispatch(
+//       setWallet({
+//         address: accounts[0],
+//         chainId: Number(network.chainId),
+//         userId: userId,
+//       })
+//     );
+
+//   } catch (error) {
+//     console.log("Auto reconnect failed");
+//   }
+// };
+
+
+
+
+
+
+
+// import { setWallet } from "../redux/slice/walletSlice";
+// import { appKit } from "./reownWallet";
+// import { ethers } from "ethers";
+// import { setGlobalProvider } from "./contract";
+
+// export const autoReconnect = async (
+//  dispatch,
+//  requiredChainId
+// )=>{
+
+// try{
+
+// const account=
+// appKit.getAccount();
+
+// if(!account?.address)
+// return;
+
+// const provider=
+// appKit.getProvider();
+
+// setGlobalProvider(provider);
+
+// const ethersProvider=
+// new ethers.BrowserProvider(provider);
+
+// const network=
+// await ethersProvider.getNetwork();
+
+// if(Number(network.chainId)!==
+// requiredChainId)
+// return;
+
+// dispatch(
+
+// setWallet({
+
+//  address:account.address,
+
+//  chainId:Number(network.chainId)
+
+// })
+
+// );
+
+// }catch(err){
+
+// console.log("Auto reconnect failed");
+
+// }
+
+// };
+
+
+
 import { setWallet } from "../redux/slice/walletSlice";
+import { appKit } from "./reownWallet";
+import { ethers } from "ethers";
+import { setGlobalProvider } from "./contract";
 
 export const autoReconnect = async (
-  dispatch,
-  requiredChainId
-) => {
-  try {
-    if (!window.ethereum) return;
+ dispatch,
+ requiredChainId
+)=>{
 
-    const provider = new ethers.BrowserProvider(
-      window.ethereum
-    );
+try{
 
-    const accounts =
-      await provider.send("eth_accounts", []);
+ const account =
+ appKit.getAccount();
 
-    if (!accounts || accounts.length === 0)
-      return;
+ if(!account?.address)
+ return;
 
-    const network =
-      await provider.getNetwork();
+ const provider =
+ appKit.getWalletProvider();
 
-    if (
-      Number(network.chainId) !== requiredChainId
-    )
-      return;
+ if(!provider)
+ return;
 
-    dispatch(
-      setWallet({
-        // address: accounts[0],
-        address: '0x2c50670e45Fd9C6347630c733BF1B3d76cdFCd1d',
+/* IMPORTANT */
 
-        chainId: Number(network.chainId),
-      })
-    );
-  } catch (error) {
-    console.log("Auto reconnect failed");
-  }
+ setGlobalProvider(provider);
+
+ const ethersProvider =
+ new ethers.BrowserProvider(provider);
+
+ const network =
+ await ethersProvider.getNetwork();
+
+ dispatch(
+
+  setWallet({
+
+   address:account.address,
+   chainId:Number(network.chainId)
+
+  })
+
+ );
+
+}catch(err){
+
+ console.log(
+ "Auto reconnect failed"
+ );
+
+}
+
 };

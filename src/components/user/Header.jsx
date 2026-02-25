@@ -166,13 +166,15 @@ function Header() {
     }
   };
 
-  const handleLogout = () => {
-    dispatch(disconnectWallet());
-    localStorage.clear();
-     persistor.purge(); // clear persisted state
-    navigate("/login");
-  };
+const handleLogout = async () => {
+  dispatch(disconnectWallet());
 
+  await persistor.purge();
+
+  localStorage.removeItem("userId");
+
+  navigate("/login");
+};
   return (
     <>
       <div className="header-middle">

@@ -9,8 +9,8 @@ function Common() {
         <p className="loader-text">Please Wait...</p>
     </div>
 
-    <input name="userid" id="userid" type="HIDDEN" value=""/>
-    <input name="baseurl" id="baseurl" type="HIDDEN" value="https://nirmalx.io/"/>
+    {/* <input name="userid" id="userid" type="HIDDEN" value=""/>
+    <input name="baseurl" id="baseurl" type="HIDDEN" value="https://nirmalx.io/"/> */}
    </>
   )
 }

@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 // import { getMainContract } from "../utils/ether";
 import { getMainContract } from "../utils/contract";
-
+import { setWallet } from "../redux/slice/walletSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { connectWallet } from "../utils/connectWallet";
 
 function ViewAccount() {
   const { contracts } = useSelector((state) => state.wallet);
   const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleViewAccount = async () => {
     try {
@@ -19,7 +22,7 @@ function ViewAccount() {
       }
 
       setLoading(true);
-
+ await connectWallet(dispatch,56);
       const contract = await getMainContract(
         contracts.MAIN_CONTRACT
       );
@@ -34,9 +37,17 @@ function ViewAccount() {
         setLoading(false);
         return toast.error("Invalid user or user does not exist");
       }
+dispatch(
+ setWallet({
+   address: userAddress,
+   chainId: null
+ })
+);
 
       // Navigate to dashboard with userId
-      navigate(`/dashboard/${userId}`);
+      // navigate(`/dashboard/${userId}`);
+      navigate('/dashboard');
+
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");

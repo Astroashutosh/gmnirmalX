@@ -1,4 +1,183 @@
-import React, { useEffect, useState } from "react";
+
+// import React, { useEffect, useState, useCallback } from "react";
+// import { useSelector } from "react-redux";
+// import { ethers } from "ethers";
+// import { getMainContract } from "../utils/contract";
+// import { toast } from "react-toastify";
+
+// function MiningHistory() {
+//   const { address, contracts } = useSelector(
+//     (state) => state.wallet
+//   );
+
+//   const [roiData, setRoiData] = useState([]);
+//   const [loading, setLoading] = useState(false);
+
+//   const pageSize = 25; // same as PHP
+
+//   /* ================= NRX PRICE (PHP EXACT) ================= */
+
+//   const fetchNRXPrice = async (main) => {
+//     try {
+//       const one = ethers.parseUnits("1", 18);
+//       const priceRaw = await main.getTokenToUSDT(one);
+//       return Number(ethers.formatUnits(priceRaw, 18));
+//     } catch {
+//       return 1;
+//     }
+//   };
+
+//   /* ================= LOAD ROI ================= */
+
+//   const loadROI = useCallback(async () => {
+//     if (!address) return;
+
+//     try {
+//       setLoading(true);
+
+//       const main = await getMainContract(
+//         contracts.MAIN_CONTRACT
+//       );
+
+//       const [exists, roiList, price] =
+//         await Promise.all([
+//           main.isUserExists(address),
+//           main.getUserROITransactions(address),
+//           fetchNRXPrice(main),
+//         ]);
+
+//       if (!exists) {
+//         toast.error("User not found");
+//         setLoading(false);
+//         return;
+//       }
+
+//       if (!roiList.length) {
+//         setRoiData([]);
+//         setLoading(false);
+//         return;
+//       }
+
+//       /* ===== SAME AS PHP (ONLY FIRST 25) ===== */
+//       const limitedData = roiList.slice(0, pageSize);
+
+//       const formatted = limitedData.map((item) => {
+//         const stakeAmount =
+//           Number(item.stakeamount) / 1e18;
+
+//         const roiAmount =
+//           Number(item.roiamount) / 1e18;
+
+//         const stakeNRX =
+//           stakeAmount / price;
+
+//         const roiNRX =
+//           roiAmount / price;
+
+//         const date = new Date(
+//           Number(item.timestamp) * 1000
+//         );
+
+//         const formattedDate =
+//           `${date.getFullYear()}-${String(
+//             date.getMonth() + 1
+//           ).padStart(2, "0")}-${String(
+//             date.getDate()
+//           ).padStart(2, "0")} ${String(
+//             date.getHours()
+//           ).padStart(2, "0")}:${String(
+//             date.getMinutes()
+//           ).padStart(2, "0")}:${String(
+//             date.getSeconds()
+//           ).padStart(2, "0")}`;
+
+//         return {
+//           id: Number(item.stakeid),
+//           stakeAmount,
+//           stakeNRX,
+//           roiAmount,
+//           roiNRX,
+//           date: formattedDate,
+//         };
+//       });
+
+//       setRoiData(formatted);
+//       setLoading(false);
+//     } catch (error) {
+//       console.error(error);
+//       toast.error("Error loading ROI history");
+//       setLoading(false);
+//     }
+//   }, [address, contracts]);
+
+//   useEffect(() => {
+//     loadROI();
+//   }, [loadROI]);
+
+//   /* ================= UI ================= */
+
+//   return (
+//     <div className="transaction-container">
+//       <h2>Mining History</h2>
+
+//       <table
+//         className="table transaction-table"
+//         style={{ color: "#ffffff" }}
+//       >
+//         <thead>
+//           <tr>
+//             <th>Stake ID</th>
+//             <th>Stake Amount</th>
+//             <th>Mining Amount</th>
+//             <th>DateTime</th>
+//           </tr>
+//         </thead>
+
+//         <tbody>
+//           {loading ? (
+//             <tr>
+//               <td colSpan="4" className="text-center">
+//                 Loading...
+//               </td>
+//             </tr>
+//           ) : roiData.length === 0 ? (
+//             <tr>
+//               <td colSpan="4" className="text-center text-warning">
+//                 No ROI records found.
+//               </td>
+//             </tr>
+//           ) : (
+//             roiData.map((row) => (
+//               <tr key={row.id}>
+//                 <td>{row.id}</td>
+
+//                 <td>
+//                   $ {row.stakeAmount.toFixed(4)} (
+//                   NRX {row.stakeNRX.toFixed(4)})
+//                 </td>
+
+//                 <td>
+//                   $ {row.roiAmount.toFixed(4)} (
+//                   NRX {row.roiNRX.toFixed(4)})
+//                 </td>
+
+//                 <td>{row.date}</td>
+//               </tr>
+//             ))
+//           )}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// }
+
+// export default MiningHistory;
+
+
+
+
+
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { ethers } from "ethers";
 import { getMainContract } from "../utils/contract";
@@ -9,36 +188,25 @@ function StakingHistory() {
     (state) => state.wallet
   );
 
-  const [stakingData, setStakingData] =
-    useState([]);
-  const [loading, setLoading] =
-    useState(false);
-  const [currentPage, setCurrentPage] =
-    useState(1);
+  const [stakingData, setStakingData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [withdrawingId, setWithdrawingId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [nrxPrice, setNrxPrice] = useState(1);
 
   const pageSize = 25;
 
-  useEffect(() => {
-    if (address && contracts?.MAIN_CONTRACT) {
-      loadStaking();
-    }
-  }, [address, currentPage]);
+  /* ================= FETCH NRX PRICE (PHP EXACT) ================= */
 
-  /* ================= NRX Price ================= */
-
-  const getNRX = async (main) => {
+  const fetchNRXPrice = async (main) => {
     try {
-      const oneToken = ethers.parseUnits(
-        "1",
-        18
+      const oneToken = ethers.parseUnits("1", 18);
+      const priceRaw = await main.getTokenToUSDT(oneToken);
+      const scaled = Number(
+        ethers.formatUnits(priceRaw, 18)
       );
-      const price =
-        await main.getTokenToUSDT(
-          oneToken
-        );
-      return Number(
-        ethers.formatUnits(price, 18)
-      );
+      setNrxPrice(scaled);
+      return scaled;
     } catch {
       return 1;
     }
@@ -46,30 +214,29 @@ function StakingHistory() {
 
   /* ================= LOAD STAKING ================= */
 
-  const loadStaking = async () => {
+  const loadStaking = useCallback(async () => {
+    if (!address) return;
+
     try {
       setLoading(true);
 
-      const main =
-        await getMainContract(
-          contracts.MAIN_CONTRACT
-        );
+      const main = await getMainContract(
+        contracts.MAIN_CONTRACT
+      );
 
-      const exists =
-        await main.isUserExists(
-          address
-        );
+      /* ---- Parallel Calls ---- */
+      const [exists, stakeList, price] =
+        await Promise.all([
+          main.isUserExists(address),
+          main.getUserStakingTransactions(address),
+          fetchNRXPrice(main),
+        ]);
 
       if (!exists) {
         toast.error("User not found");
         setLoading(false);
         return;
       }
-
-      const stakeList =
-        await main.getUserStakingTransactions(
-          address
-        );
 
       if (!stakeList.length) {
         setStakingData([]);
@@ -82,109 +249,143 @@ function StakingHistory() {
       const endIndex =
         startIndex + pageSize;
 
-      const paginated =
-        stakeList.slice(
-          startIndex,
-          endIndex
+      const paginated = stakeList.slice(
+        startIndex,
+        endIndex
+      );
+
+      const formatted = paginated.map((item) => {
+        /* ==== EXACT PHP STYLE CALC ==== */
+        const amount =
+          Number(item.amount) / 1e18;
+
+        const totalRoi =
+          Number(item.totalRoi) / 1e18;
+
+        const totalCapitalReturn =
+          Number(item.totalCapitalReturn) /
+          1e18;
+
+        const amountNRX =
+          amount / price;
+
+        const roiNRX =
+          totalRoi / price;
+
+        const capitalNRX =
+          totalCapitalReturn / price;
+
+        const date = new Date(
+          Number(item.timestamp) * 1000
         );
 
-      const nrxValue = await getNRX(main);
+        const formattedDate =
+          `${date.getFullYear()}-${String(
+            date.getMonth() + 1
+          ).padStart(2, "0")}-${String(
+            date.getDate()
+          ).padStart(2, "0")} ${String(
+            date.getHours()
+          ).padStart(2, "0")}:${String(
+            date.getMinutes()
+          ).padStart(2, "0")}:${String(
+            date.getSeconds()
+          ).padStart(2, "0")}`;
 
-      const formatted =
-        paginated.map((item) => {
-          const amount = Number(
-            ethers.formatUnits(
-              item.amount,
-              18
-            )
-          );
+        /* ==== EXACT PHP STATUS ==== */
+        const status =
+          amount === 0
+            ? "Capital Withdraw"
+            : "On Going.";
 
-          const totalRoi = Number(
-            ethers.formatUnits(
-              item.totalRoi,
-              18
-            )
-          );
+        const stakeType =
+          Number(item.stakeType);
 
-          const totalCapitalReturn =
-            Number(
-              ethers.formatUnits(
-                item.totalCapitalReturn,
-                18
-              )
-            );
+        let packageName =
+          stakeType === 1
+            ? "Staking Package"
+            : "--";
 
-          const amountNRX =
-            amount / nrxValue;
+        let action;
 
-          const roiNRX =
-            totalRoi / nrxValue;
+        if (stakeType === 1) {
+          action = "--";
+        } else {
+          if (amount === 0) {
+            action = "Withdrawn";
+          } else {
+            action = "Capital Withdraw";
+          }
+        }
 
-          const capitalNRX =
-            totalCapitalReturn /
-            nrxValue;
-
-          const date = new Date(
-            Number(item.timestamp) *
-              1000
-          );
-
-          const formattedDate =
-            `${date.getFullYear()}-${String(
-              date.getMonth() + 1
-            ).padStart(2, "0")}-${String(
-              date.getDate()
-            ).padStart(2, "0")} ${String(
-              date.getHours()
-            ).padStart(2, "0")}:${String(
-              date.getMinutes()
-            ).padStart(2, "0")}:${String(
-              date.getSeconds()
-            ).padStart(2, "0")}`;
-
-          let status =
-            amount === 0
-              ? "Capital Withdraw"
-              : "On Going.";
-
-          let packageName =
-            item.stakeType === 1
-              ? "Staking Package"
-              : "--";
-
-          let action =
-            item.stakeType === 1
-              ? "--"
-              : amount === 0
-              ? "Withdrawn"
-              : "Capital Withdraw";
-
-          return {
-            id: item.id,
-            amount,
-            amountNRX,
-            totalRoi,
-            roiNRX,
-            totalCapitalReturn,
-            capitalNRX,
-            date: formattedDate,
-            status,
-            packageName,
-            action,
-          };
-        });
+        return {
+          id: Number(item.id),
+          amount,
+          amountNRX,
+          totalRoi,
+          roiNRX,
+          totalCapitalReturn,
+          capitalNRX,
+          date: formattedDate,
+          status,
+          packageName,
+          action,
+        };
+      });
 
       setStakingData(formatted);
       setLoading(false);
     } catch (error) {
-      console.error(
-        "Error loading stake list:",
-        error
-      );
+      console.error(error);
       toast.error(
         "Error loading staking history"
       );
       setLoading(false);
+    }
+  }, [address, currentPage, contracts]);
+
+  useEffect(() => {
+    loadStaking();
+  }, [loadStaking]);
+
+  /* ================= WITHDRAW ================= */
+
+  const handleCapitalWithdraw = async (
+    stakeId
+  ) => {
+    try {
+      const confirmWithdraw =
+        window.confirm(
+          "Are you sure for capital withdraw?"
+        );
+
+      if (!confirmWithdraw) return;
+
+      setWithdrawingId(stakeId);
+
+      const main = await getMainContract(
+        contracts.MAIN_CONTRACT
+      );
+
+      const tx =
+        await main.withdrawCapital(
+          stakeId
+        );
+
+      await tx.wait();
+
+      toast.success(
+        "Successfully withdrawn"
+      );
+
+      loadStaking();
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        "Transaction failed or rejected"
+      );
+    } finally {
+      setWithdrawingId(null);
     }
   };
 
@@ -225,67 +426,77 @@ function StakingHistory() {
               </td>
             </tr>
           ) : (
-            stakingData.map(
-              (row, index) => (
-                <tr key={index}>
-                  <td>{row.id}</td>
+            stakingData.map((row) => (
+              <tr key={row.id}>
+                <td>{row.id}</td>
 
-                  <td>
-                    $ {row.amount.toFixed(4)} (
-                    NRX{" "}
-                    {row.amountNRX.toFixed(4)}
-                    )
-                  </td>
+                <td>
+                  $ {row.amount.toFixed(4)} (
+                  NRX {row.amountNRX.toFixed(4)})
+                </td>
 
-                  <td>
-                    $ {row.totalRoi.toFixed(4)} (
-                    NRX{" "}
-                    {row.roiNRX.toFixed(4)})
-                  </td>
+                <td>
+                  $ {row.totalRoi.toFixed(4)} (
+                  NRX {row.roiNRX.toFixed(4)})
+                </td>
 
-                  <td>
-                    $ {row.totalCapitalReturn.toFixed(
-                      4
-                    )}{" "}
-                    ( NRX{" "}
-                    {row.capitalNRX.toFixed(
-                      4
-                    )}
-                    )
-                  </td>
+                <td>
+                  $ {row.totalCapitalReturn.toFixed(
+                    4
+                  )}{" "}
+                  ( NRX{" "}
+                  {row.capitalNRX.toFixed(4)})
+                </td>
 
-                  <td>{row.date}</td>
+                <td>{row.date}</td>
 
-                  <td>
-                    <div className="badge badge-outline-warning">
-                      {row.status}
+                <td>
+                  <div className="badge badge-outline-warning">
+                    {row.status}
+                  </div>
+                </td>
+
+                <td>
+                  <div className="badge badge-outline-warning">
+                    {row.packageName}
+                  </div>
+                </td>
+
+                <td>
+                  {row.action ===
+                  "Capital Withdraw" ? (
+                    <button
+                      className="btn btn-sm btn-primary"
+                      disabled={
+                        withdrawingId ===
+                        row.id
+                      }
+                      onClick={() =>
+                        handleCapitalWithdraw(
+                          row.id
+                        )
+                      }
+                    >
+                      {withdrawingId ===
+                      row.id
+                        ? "Processing..."
+                        : "Capital Withdraw"}
+                    </button>
+                  ) : row.action ===
+                    "Withdrawn" ? (
+                    <div className="badge badge-outline-success">
+                      Withdrawn
                     </div>
-                  </td>
-
-                  <td>
-                    <div className="badge badge-outline-warning">
-                      {row.packageName}
-                    </div>
-                  </td>
-
-                  <td>
-                    {row.action ===
-                    "Capital Withdraw" ? (
-                      <button className="btn btn-sm btn-primary">
-                        Capital Withdraw
-                      </button>
-                    ) : (
-                      row.action
-                    )}
-                  </td>
-                </tr>
-              )
-            )
+                  ) : (
+                    "--"
+                  )}
+                </td>
+              </tr>
+            ))
           )}
         </tbody>
       </table>
 
-      {/* Pagination */}
       <div className="d-flex justify-content-between mt-3">
         <button
           className="connect_btn"

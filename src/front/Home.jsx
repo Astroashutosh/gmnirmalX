@@ -1,10 +1,28 @@
-import React from 'react'
+
 import Hero from "../components/layout/Hero";
 import Slider from '../components/layout/FeatureSlider';
-
+import React, { useEffect, useState } from "react";
 function Home() {
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    setShowModal(true);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
+  const closeModal = () => {
+    setShowModal(false);
+    document.body.style.overflow = "auto";
+  };
+
   return (
    <>
+
+
    <Hero/>
 <section className="about-section" id="about">
   <div className="container">
@@ -27,6 +45,42 @@ function Home() {
 
 
 <Slider/>
+
+   {showModal && (
+  <div className="nrxModal">
+    <div className="nrxModalContent">
+      <span className="nrxClose" onClick={closeModal}>
+        &times;
+      </span>
+
+      <h2>🚨 NRX Withdrawal Update</h2>
+
+      <p>
+        To maintain a strong and stable NRX price, a new withdrawal system has been implemented:
+      </p>
+
+      <ul>
+        <li><strong>Daily Withdrawal Limit:</strong> Max $25 per ID</li>
+        <li><strong>Target Rate Protection:</strong> $10 Zone</li>
+        <li>After rate stability: Withdrawal up to $50/day</li>
+      </ul>
+
+      <p>
+        This step is designed to control sudden selling pressure and secure long-term income for all holders.
+      </p>
+
+      <p>
+        <strong>Controlled Supply = Strong Price = Stable Income</strong>
+      </p>
+
+      <p>
+        Thank you for supporting the NRX ecosystem.<br />
+        Hold Strong • Grow Together 🚀
+      </p>
+    </div>
+  </div>
+)}
+
 
    </>
   )

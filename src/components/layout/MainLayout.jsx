@@ -6,7 +6,7 @@ import Footer from "./Footer";
 function MainLayout() {
   return (
     <>
-   <div class="fixed-bg"></div>
+   <div className="fixed-bg"></div>
 
     <Navbar/>
         <Outlet />

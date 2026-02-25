@@ -1,13 +1,15 @@
 import React from 'react'
+import banner from '/images/banner3.png'
+import mobileBanner from '/images/mobile-banner1.png'
 
 function Hero() {
   return (
-   <section class="hero-wrap">
+   <section className="hero-wrap">
   
-  <img src="/images/banner3.png" class="banner-desktop" alt="Banner Desktop"/>
+  <img src={banner} className="banner-desktop" alt="Banner Desktop"/>
   
  
-  <img src="/images/mobile-banner1.png" class="banner-mobile" alt="Banner Mobile"/>
+  <img src={mobileBanner} className="banner-mobile" alt="Banner Mobile"/>
 </section>
 
   )
