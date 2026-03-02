@@ -78,7 +78,7 @@ import "./index.css";
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <BrowserRouter basename="/nirmalX_react_demo/">
+      <BrowserRouter basename="/gmnirmalX_react_demo/">
         <App />
         <ToastContainer
           position="top-right"

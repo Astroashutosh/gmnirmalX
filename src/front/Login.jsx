@@ -14,256 +14,256 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { address, isConnected, contracts, network} =
+  const { address, isConnected, contracts, network } =
     useSelector((state) => state.wallet);
 
   const [loading, setLoading] = useState(false);
 
-//   const handleLogin = async () => {
-//     try {
-//       setLoading(true);
+  //   const handleLogin = async () => {
+  //     try {
+  //       setLoading(true);
 
-//       let userAddress = address;
-//       // let userAddress = "0x2c50670e45Fd9C6347630c733BF1B3d76cdFCd1d";
+  //       let userAddress = address;
+  //       // let userAddress = "0x2c50670e45Fd9C6347630c733BF1B3d76cdFCd1d";
 
 
-//       // 🔥 Wallet connect
-//       if (!isConnected) {
-//         userAddress = await connectWallet(dispatch, network.CHAIN_ID);
-//         if (!userAddress) {
-//           setLoading(false);
-//           return;
-//         }
-//       }
+  //       // 🔥 Wallet connect
+  //       if (!isConnected) {
+  //         userAddress = await connectWallet(dispatch, network.CHAIN_ID);
+  //         if (!userAddress) {
+  //           setLoading(false);
+  //           return;
+  //         }
+  //       }
 
-//       const contract = await getMainContract(
-//         contracts.MAIN_CONTRACT
-//       );
+  //       const contract = await getMainContract(
+  //         contracts.MAIN_CONTRACT
+  //       );
 
-//       // 🔥 Check user exists
-//       const exists = await contract.isUserExists(userAddress);
+  //       // 🔥 Check user exists
+  //       const exists = await contract.isUserExists(userAddress);
 
-//       if (!exists) {
-//         toast.warning(
-//           "Wallet not registered. Redirecting to signup..."
-//         );
+  //       if (!exists) {
+  //         toast.warning(
+  //           "Wallet not registered. Redirecting to signup..."
+  //         );
 
-//         setTimeout(() => {
-//           navigate("/register");
-//         }, 2000);
+  //         setTimeout(() => {
+  //           navigate("/register");
+  //         }, 2000);
 
-//         return;
-//       }
+  //         return;
+  //       }
 
-//       // 🔥 Fetch user data
-//       const userData = await contract.users(userAddress);
+  //       // 🔥 Fetch user data
+  //       const userData = await contract.users(userAddress);
 
-//       console.log("User Data:", userData);
+  //       console.log("User Data:", userData);
 
-//       toast.success("Login Successful ✅");
+  //       toast.success("Login Successful ✅");
 
-//       // 🔥 Store user ID in localStorage (like PHP session)
-//       localStorage.setItem("userId", userData.id);
-//       localStorage.setItem("walletAddress",userAddress);
+  //       // 🔥 Store user ID in localStorage (like PHP session)
+  //       localStorage.setItem("userId", userData.id);
+  //       localStorage.setItem("walletAddress",userAddress);
 
-//      const userID=userData.id.toString();
-//   dispatch(
-//     setWallet({
-//       address:userAddress,
-//       userId: userID,
-//     })
-//   );
+  //      const userID=userData.id.toString();
+  //   dispatch(
+  //     setWallet({
+  //       address:userAddress,
+  //       userId: userID,
+  //     })
+  //   );
 
-//       // 🔥 Redirect to dashboard
-// // navigate(`/dashboard/${userData.id.toString()}`);
-// navigate('/dashboard');
+  //       // 🔥 Redirect to dashboard
+  // // navigate(`/dashboard/${userData.id.toString()}`);
+  // navigate('/dashboard');
 
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Login Failed ❌");
-//     }
+  //     } catch (error) {
+  //       console.error(error);
+  //       toast.error("Login Failed ❌");
+  //     }
 
-//     setLoading(false);
-//   };
+  //     setLoading(false);
+  //   };
 
 
 
-// const handleLogin = async () => {
-//   try {
-//     setLoading(true);
+  // const handleLogin = async () => {
+  //   try {
+  //     setLoading(true);
 
-//     let userAddress = address;
-// //  let userAddress = "0x2c50670e45Fd9C6347630c733BF1B3d76cdFCd1d";
-//     if (!isConnected) {
-//       userAddress = await connectWallet(dispatch, network.CHAIN_ID);
-//       if (!userAddress) {
-//         setLoading(false);
-//         return;
-//       }
-//     }
+  //     let userAddress = address;
+  // //  let userAddress = "0x2c50670e45Fd9C6347630c733BF1B3d76cdFCd1d";
+  //     if (!isConnected) {
+  //       userAddress = await connectWallet(dispatch, network.CHAIN_ID);
+  //       if (!userAddress) {
+  //         setLoading(false);
+  //         return;
+  //       }
+  //     }
 
-//     const contract = await getMainContract(contracts.MAIN_CONTRACT);
+  //     const contract = await getMainContract(contracts.MAIN_CONTRACT);
 
-//     const exists = await contract.isUserExists(userAddress);
+  //     const exists = await contract.isUserExists(userAddress);
 
-//     if (!exists) {
-//       toast.warning("Wallet not registered. Redirecting...");
-//       setTimeout(() => navigate("/register"), 1500);
-//       return;
-//     }
+  //     if (!exists) {
+  //       toast.warning("Wallet not registered. Redirecting...");
+  //       setTimeout(() => navigate("/register"), 1500);
+  //       return;
+  //     }
 
-//     const userData = await contract.users(userAddress);
+  //     const userData = await contract.users(userAddress);
 
-//     const userID = userData.id.toString();
+  //     const userID = userData.id.toString();
 
-//     dispatch(
-//       setWallet({
-//         address: userAddress,
-//         chainId: network.CHAIN_ID,
-//         userId: userID,
-//         userData: userData,
-//       })
-//     );
+  //     dispatch(
+  //       setWallet({
+  //         address: userAddress,
+  //         chainId: network.CHAIN_ID,
+  //         userId: userID,
+  //         userData: userData,
+  //       })
+  //     );
 
-//     localStorage.setItem("userId", userID);
+  //     localStorage.setItem("userId", userID);
 
-//     toast.success("Login Successful ✅");
+  //     toast.success("Login Successful ✅");
 
-//     navigate("/dashboard");
+  //     navigate("/dashboard");
 
-//   } catch (error) {
-//     console.error(error);
-//     toast.error("Login Failed ❌");
-//   }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("Login Failed ❌");
+  //   }
 
-//   setLoading(false);
-// };
+  //   setLoading(false);
+  // };
 
 
-const handleLogin = async () => {
+  const handleLogin = async () => {
 
-try{
+    try {
 
-setLoading(true);
+      setLoading(true);
 
-let userAddress = address;
+      let userAddress = address;
 
 
-/* CONNECT WALLET */
+      /* CONNECT WALLET */
 
-if(!isConnected){
+      if (!isConnected) {
 
- userAddress =
- await connectWallet(
- dispatch,
- network.CHAIN_ID
- );
+        userAddress =
+          await connectWallet(
+            dispatch,
+            network.CHAIN_ID
+          );
 
- if(!userAddress){
+        if (!userAddress) {
 
- setLoading(false);
- return;
+          setLoading(false);
+          return;
 
- }
+        }
 
-}
+      }
 
 
-/* CONTRACT */
+      /* CONTRACT */
 
-const contract =
-await getMainContract(
-contracts.MAIN_CONTRACT
-);
+      const contract =
+        await getMainContract(
+          contracts.MAIN_CONTRACT
+        );
 
 
-/* USER EXISTS */
+      /* USER EXISTS */
 
-const exists =
-await contract.isUserExists(
-userAddress
-);
+      const exists =
+        await contract.isUserExists(
+          userAddress
+        );
 
-if(!exists){
+      if (!exists) {
 
-toast.warning(
-"Wallet not registered"
-);
+        toast.warning(
+          "Wallet not registered"
+        );
 
-setTimeout(()=>{
+        setTimeout(() => {
 
-navigate("/register");
+          navigate("/register");
 
-},1500);
+        }, 1500);
 
-setLoading(false);
-return;
+        setLoading(false);
+        return;
 
-}
+      }
 
 
-/* USER DATA */
+      /* USER DATA */
 
-const userData =
-await contract.users(
-userAddress
-);
+      const userData =
+        await contract.users(
+          userAddress
+        );
 
-const userID =
-userData.id.toString();
+      const userID =
+        userData.id.toString();
 
 
-dispatch(
+      dispatch(
 
-setWallet({
+        setWallet({
 
- address:userAddress,
- chainId:network.CHAIN_ID,
- userId:userID,
- userData:userData
+          address: userAddress,
+          chainId: network.CHAIN_ID,
+          userId: userID,
+          userData: userData
 
-})
+        })
 
-);
+      );
 
 
-/* LOCAL STORAGE */
+      /* LOCAL STORAGE */
 
-localStorage.setItem(
-"userId",
-userID
-);
+      localStorage.setItem(
+        "userId",
+        userID
+      );
 
 
-localStorage.setItem(
-"walletAddress",
-userAddress
-);
+      localStorage.setItem(
+        "walletAddress",
+        userAddress
+      );
 
 
-toast.success(
-"Login Successful ✅"
-);
+      toast.success(
+        "Login Successful ✅"
+      );
 
 
-/* REDIRECT */
+      /* REDIRECT */
 
-navigate("/dashboard");
+      navigate("/dashboard");
 
 
-}catch(error){
+    } catch (error) {
 
-console.log(error);
+      console.log(error);
 
-toast.error(
-"Login Failed ❌"
-);
+      toast.error(
+        "Login Failed ❌"
+      );
 
-}
+    }
 
-setLoading(false);
+    setLoading(false);
 
-};
+  };
 
 
 

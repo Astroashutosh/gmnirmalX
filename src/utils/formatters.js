@@ -23,19 +23,34 @@ export const formatUSDNRX = (amount, price) => {
 };
 
 /* ===== RANK FORMAT ===== */
-export const formatRank = (rankValue) => {
+// export const formatRank = (rankValue) => {
+//   const ranks = [
+//     "",
+//     "NRX1",
+//     "NRX2",
+//     "NRX3",
+//     "NRX4",
+//     "NRX5",
+//     "NRX6",
+//     "NRX7",
+//     "NRX8",
+//     "NRX9",
+//   ];
+
+//   return ranks[Number(rankValue)] || "No Rank";
+// };
+
+
+export const formatRank = (rank) => {
   const ranks = [
     "",
-    "NRX1",
-    "NRX2",
-    "NRX3",
-    "NRX4",
-    "NRX5",
-    "NRX6",
-    "NRX7",
-    "NRX8",
-    "NRX9",
+    "Pearl",
+    "Sapphire",
+    "Emerald",
+    "Ruby",
+    "Diamond",
+    "Double Diamond",
   ];
 
-  return ranks[Number(rankValue)] || "No Rank";
+  return rank > 0 ? ranks[Number(rank)] : "No Rank";
 };

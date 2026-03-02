@@ -52,7 +52,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { ethers } from "ethers";
-import { getMainContract, getSigner } from "../utils/contract";
+import { getMainContract } from "../utils/contract";
 import { toast } from "react-toastify";
 
 function Transaction() {
