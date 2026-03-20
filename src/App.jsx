@@ -23,118 +23,120 @@ import PendingStaking from "./user/PendingStaking";
 import ApprovedStaking from "./user/ApprovedStaking";
 import OwnerWithdraw from "./user/OwnerWithdraw";
 import GoldPriceSetting from "./user/GoldPriceSetting";
+import Staking from "./user/Staking";
 
 function App() {
 
- const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
- const { network } =
- useSelector(
- (state)=>state.wallet
- );
+    const { network } =
+        useSelector(
+            (state) => state.wallet
+        );
 
- /* IMPORTANT */
+    /* IMPORTANT */
 
- const [ready,setReady] =
- useState(false);
+    const [ready, setReady] =
+        useState(false);
 
- /* AUTO RECONNECT */
+    /* AUTO RECONNECT */
 
- useEffect(()=>{
+    useEffect(() => {
 
- const init=async()=>{
+        const init = async () => {
 
- await autoReconnect(
- dispatch,
- network.CHAIN_ID
- );
+            await autoReconnect(
+                dispatch,
+                network.CHAIN_ID
+            );
 
- setReady(true);
+            setReady(true);
 
- };
+        };
 
- init();
+        init();
 
- },[]);
-
-
- /* METAMASK EVENTS */
-
- useEffect(()=>{
-
- if(!window.ethereum)
- return;
-
- window.ethereum.on(
- "accountsChanged",
- ()=>window.location.reload()
- );
-
- window.ethereum.on(
- "chainChanged",
- ()=>window.location.reload()
- );
-
- },[]);
+    }, []);
 
 
- /* WAIT UNTIL READY */
+    /* METAMASK EVENTS */
 
- if(!ready){
+    useEffect(() => {
 
- return null;
+        if (!window.ethereum)
+            return;
 
- }
+        window.ethereum.on(
+            "accountsChanged",
+            () => window.location.reload()
+        );
 
+        window.ethereum.on(
+            "chainChanged",
+            () => window.location.reload()
+        );
 
- return(
-
- <Routes>
-
- <Route element={<MainLayout />}>
-
- <Route path="/" element={<Home />} />
-
- <Route path="/login" element={<Login />} />
-
- <Route path="/register" element={<Register />} />
-
- <Route path="/view-account" element={<ViewAccount />} />
-
- </Route>
+    }, []);
 
 
- <Route element={<ProtectedRoute />}>
+    /* WAIT UNTIL READY */
 
- <Route path="/dashboard" element={<Dashboard />} />
+    if (!ready) {
 
- <Route path="/level" element={<Level />} />
+        return null;
 
- <Route path="/transaction" element={<Transaction />} />
+    }
 
- <Route path="/roiCalculator" element={<StakingCalculator />} />
 
- <Route path="/dashboard/:userId" element={<Dashboard />} />
+    return (
 
- <Route path="/lockHistory" element={<LockHistory />} />
+        <Routes>
 
- <Route path="/myPartners" element={<MyPartners />} />
+            <Route element={<MainLayout />}>
 
- <Route path="/miningHistory" element={<MiningHistory />} />
+                <Route path="/" element={<Home />} />
 
- <Route path="/stakingHistory" element={<StakingHistory />} />
+                <Route path="/login" element={<Login />} />
 
- <Route path="/withdrawHistory" element={<WithdrawHistory />} />
- <Route path="/pendingStaking" element={<PendingStaking />} />
-<Route path="/approved-staking" element={<ApprovedStaking />} />
-<Route path="/ownerWithdraw" element={<OwnerWithdraw />} />
-<Route path="/goldPriceSetting" element={<GoldPriceSetting />} />
+                <Route path="/register" element={<Register />} />
 
- </Route>
+                <Route path="/view-account" element={<ViewAccount />} />
 
- </Routes>
+            </Route>
 
- );
+
+            <Route element={<ProtectedRoute />}>
+
+                <Route path="/dashboard" element={<Dashboard />} />
+
+                <Route path="/level" element={<Level />} />
+
+                <Route path="/transaction" element={<Transaction />} />
+
+                <Route path="/roiCalculator" element={<StakingCalculator />} />
+
+                <Route path="/dashboard/:userId" element={<Dashboard />} />
+
+                <Route path="/lockHistory" element={<LockHistory />} />
+
+                <Route path="/myPartners" element={<MyPartners />} />
+
+                <Route path="/miningHistory" element={<MiningHistory />} />
+
+                <Route path="/stakingHistory" element={<StakingHistory />} />
+
+                <Route path="/withdrawHistory" element={<WithdrawHistory />} />
+                <Route path="/pendingStaking" element={<PendingStaking />} />
+                <Route path="/approved-staking" element={<ApprovedStaking />} />
+                <Route path="/ownerWithdraw" element={<OwnerWithdraw />} />
+                <Route path="/goldPriceSetting" element={<GoldPriceSetting />} />
+                <Route path="/staking" element={<Staking />} />
+
+            </Route>
+
+        </Routes>
+
+    );
 
 }
 

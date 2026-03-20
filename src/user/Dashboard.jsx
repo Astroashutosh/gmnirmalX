@@ -595,11 +595,12 @@ import Header from "../components/user/Header";
 import { ethers } from "ethers";
 import { getMainContract } from "../utils/contract";
 import Cards from "./Cards";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
 
-  const { contracts, address } = useSelector((state) => state.wallet);
-
+  const { contracts, address,baseUrl } = useSelector((state) => state.wallet);
+  const navigate = useNavigate();
   const [available, setAvailable] = useState({ nrx: "0.0000", usd: "0.0000" });
   const [totalEarn, setTotalEarn] = useState({ nrx: "0.0000", usd: "0.0000" });
   const [levelIncome, setLevelIncome] = useState({ nrx: "0.0000", usd: "0.0000" });
@@ -620,11 +621,19 @@ function Dashboard() {
   const priceRef = useRef(0);
   const deployRef = useRef(null);
 
+
+  const [withdrawCheck, setWithdrawCheck] = useState({
+    success: false,
+    amount: 0
+  });
+
+
   /* ================= LOAD FAST (ONE BATCH CALL) ================= */
 
   useEffect(() => {
     if (address && contracts?.MAIN_CONTRACT) {
       loadDashboard();
+      checkWithdrawStake();
     }
   }, [address]);
 
@@ -774,6 +783,59 @@ function Dashboard() {
 
   /* ================= UI (UNCHANGED DESIGN) ================= */
 
+  const checkWithdrawStake = async () => {
+    try {
+      const main = await getMainContract(contracts.MAIN_CONTRACT);
+      const userDetail = await main.users(address);
+
+      const userId = userDetail.id.toString();
+
+      const formData = new FormData();
+      formData.append("action", "check_withdraw_stake");
+      formData.append("userid", userId);
+
+      const res = await fetch(
+        `${baseUrl}user/user_action.php`,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+      const data = await res.json();
+// console.log(data);
+
+      if (data) {
+
+        setWithdrawCheck({
+          success: data.success,
+          amount: data.amount
+        });
+
+        if (data.success === false) {
+          //  alert(data.amount);
+          const halfAmount = data.amount / 2;
+
+          toast.info("Please stake first to continue");
+          console.log(data)
+          navigate("/staking", {
+            state: {
+              amount: halfAmount,
+              wd_id: data.wd_id
+            }
+          });
+
+        }
+
+      }
+
+    } catch (error) {
+      console.error("Withdraw check error:", error);
+    }
+  };
+
+
+
   return (
     <>
       <Header />
@@ -852,17 +914,17 @@ function Dashboard() {
                     </Link> : {teamCount}</div>
                     <div>Total Team Business : $ {teamBusiness.usd} ( NRX {teamBusiness.nrx} )</div>
                     <div>My ID : {myId}</div>
-            
+
                   </div>
 
                   <div className="col-sm-6">
                     <div>Total Earning : NRX {totalEarn.nrx} ( $ {totalEarn.usd} )</div>
                   </div>
 
- <div className="col-sm-6">
+                  <div className="col-sm-6">
                     <div>Total Capping : NRX {totalCapping.nrx} ( $ {totalCapping.usd} )</div>
                   </div>
-                 
+
                 </div>
 
                 {/* ===== REFERRAL LINK (PHP SAME) ===== */}
@@ -873,7 +935,7 @@ function Dashboard() {
                   <input
                     className="baseInput referral-link refWidth"
                     readOnly
-                    value={`https://gm.nirmalx.io/gmnirmalX_react_demo/register?ref=${myId}`}
+                    value={`https://gm.nirmalx.io/register?ref=${myId}`}
                     style={{
                       color: "#000",
                       backgroundColor: "#fff",
@@ -886,7 +948,7 @@ function Dashboard() {
                     className="base_btn copy_ref"
                     onClick={() => {
                       navigator.clipboard.writeText(
-                        `https://gm.nirmalx.io/gmnirmalX_react_demo/register?ref=${myId}`
+                        `https://gm.nirmalx.io/register?ref=${myId}`
                       );
                       toast.success("Copied!");
                     }}

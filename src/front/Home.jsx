@@ -52,31 +52,16 @@ function Home() {
       <span className="nrxClose" onClick={closeModal}>
         &times;
       </span>
-
-      <h2>🚨 NRX Withdrawal Update</h2>
-
-      <p>
-        To maintain a strong and stable NRX price, a new withdrawal system has been implemented:
-      </p>
-
-      <ul>
-        <li><strong>Daily Withdrawal Limit:</strong> Max $25 per ID</li>
-        <li><strong>Target Rate Protection:</strong> $10 Zone</li>
-        <li>After rate stability: Withdrawal up to $50/day</li>
-      </ul>
-
-      <p>
-        This step is designed to control sudden selling pressure and secure long-term income for all holders.
-      </p>
-
-      <p>
-        <strong>Controlled Supply = Strong Price = Stable Income</strong>
-      </p>
-
-      <p>
-        Thank you for supporting the NRX ecosystem.<br />
-        Hold Strong • Grow Together 🚀
-      </p>
+ <h4>🚨Relationship package Update 🚨</h4>
+    <p>To maintain a strong and stable NRX price, a new withdrawal system has been implemented:</p>
+    <ul>
+      <li><strong>Monthly Withdrawal Limit:</strong> Max $1500 per ID</li>
+      <li><strong>Target Rate Protection:</strong> $10 Zone</li>
+      <li>After rate stability: Withdrawal up to $3000/Monthly</li>
+    </ul>
+    <p>This step is designed to control sudden selling pressure and secure long-term income for all holders.</p>
+    <p><strong>Controlled Supply = Strong Price = Stable Income</strong></p>
+    <p>Thank you for supporting the NRX ecosystem.<br/>Hold Strong • Grow Together 🚀 including all active passive income</p>
     </div>
   </div>
 )}

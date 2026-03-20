@@ -7,7 +7,7 @@ const initialState = {
   chainId: null,
   userId: null,
   userData: null,
-
+  baseUrl:"https://gm.nirmalx.io/old/",
   contracts: {
     MAIN_CONTRACT: "0x004d636F30f99a97E0929F0501712D6AB626F470",
     TOKEN_CONTRACT: "0x7012c662747EF65bcDabFDEe6cB2d41666c2903C",
